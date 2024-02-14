@@ -55,6 +55,8 @@ add_message_files(
   CarState.msg
   Altimeter.msg
   Environment.msg
+  RotorPWM.msg 
+  RotorPWM.msg
 )
 
 add_service_files(
