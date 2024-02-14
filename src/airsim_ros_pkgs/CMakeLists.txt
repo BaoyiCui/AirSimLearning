@@ -56,7 +56,7 @@ add_message_files(
   Altimeter.msg
   Environment.msg
   RotorPWM.msg 
-  RotorPWM.msg
+  AngleRateThrottle.msg
 )
 
 add_service_files(

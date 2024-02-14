@@ -25,6 +25,7 @@ STRICT_MODE_OFF //todo what does this do?
 #include <airsim_ros_pkgs/TakeoffGroup.h>
 #include <airsim_ros_pkgs/VelCmd.h>
 #include <airsim_ros_pkgs/VelCmdGroup.h>
+#include <airsim_ros_pkgs/AngleRateThrottle.h>
 #include <airsim_ros_pkgs/CarControls.h>
 #include <airsim_ros_pkgs/CarState.h>
 #include <airsim_ros_pkgs/Environment.h>
@@ -113,6 +114,15 @@ struct GimbalCmd
     //         const std::string& camera_name,
     //         const msr::airlib::Quaternionr& target_quat) :
     //         vehicle_name(vehicle_name), camera_name(camera_name), target_quat(target_quat) {};
+};
+
+struct AngleRateThrCmd
+{
+    std::string vehicle_name;
+    double rollRate;
+    double pitchRate;
+    double yawRate;
+    double throttle;
 };
 
 class AirsimROSWrapper
@@ -205,12 +215,16 @@ private:
 
         ros::Subscriber vel_cmd_body_frame_sub;
         ros::Subscriber vel_cmd_world_frame_sub;
+        ros::Subscriber angleRateThr_cmd_sub;
 
         ros::ServiceServer takeoff_srvr;
         ros::ServiceServer land_srvr;
 
         bool has_vel_cmd;
+        bool has_angleRateThr_cmd;
+        AngleRateThrCmd angleRateThr_cmd;
         VelCmd vel_cmd;
+
 
         /// Status
         // bool in_air_; // todo change to "status" and keep track of this
@@ -231,6 +245,7 @@ private:
     void vel_cmd_all_world_frame_cb(const airsim_ros_pkgs::VelCmd& msg);
     void vel_cmd_all_body_frame_cb(const airsim_ros_pkgs::VelCmd& msg);
 
+    void angleRateThr_cmd_cb(const airsim_ros_pkgs::AngleRateThrottle::ConstPtr& msg, const std::string& vehicle_name);
     // void vel_cmd_body_frame_cb(const airsim_ros_pkgs::VelCmd& msg, const std::string& vehicle_name);
     void gimbal_angle_quat_cmd_cb(const airsim_ros_pkgs::GimbalAngleQuatCmd& gimbal_angle_quat_cmd_msg);
     void gimbal_angle_euler_cmd_cb(const airsim_ros_pkgs::GimbalAngleEulerCmd& gimbal_angle_euler_cmd_msg);
@@ -366,7 +381,7 @@ private:
     tf2_ros::TransformListener tf_listener_;
 
     /// ROS params
-    double vel_cmd_duration_;
+    double control_cmd_duration_;
 
     /// ROS Timers.
     ros::Timer airsim_img_response_timer_;
